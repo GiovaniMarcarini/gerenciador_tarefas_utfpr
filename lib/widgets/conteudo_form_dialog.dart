@@ -1,9 +1,6 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../model/tarefa.dart';
 
 class ConteudoFormDialog extends StatefulWidget{
@@ -12,10 +9,10 @@ class ConteudoFormDialog extends StatefulWidget{
   ConteudoFormDialog({Key? key, this.tarefaAtual}) : super(key: key);
 
   @override
-  _ConteudoFormDialogState createState() => _ConteudoFormDialogState();
+  ConteudoFormDialogState createState() => ConteudoFormDialogState();
 }
 
-class _ConteudoFormDialogState extends State<ConteudoFormDialog>{
+class ConteudoFormDialogState extends State<ConteudoFormDialog>{
     final formKey = GlobalKey<FormState>();
     final descricaoController = TextEditingController();
     final prazoController = TextEditingController();

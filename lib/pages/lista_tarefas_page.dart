@@ -1,9 +1,7 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../model/tarefa.dart';
-import 'conteudo_form_dialog.dart';
+import '../widgets/conteudo_form_dialog.dart';
 
 class ListaTarefasPage extends StatefulWidget{
 
@@ -18,6 +16,7 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
     //prazo: DateTime.now().add(Duration(days: 5))
    // ),
   ];
+   int _ultimoId = 0;
 
   @override
   Widget build(BuildContext context){
@@ -25,7 +24,7 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
       appBar: _criarAppBar(),
       body: _criarBody(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _abrirForm(),
+        onPressed: _abrirForm,
         tooltip: 'Nova Tarefa',
         child: Icon(Icons.add),
       ),
@@ -83,7 +82,13 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
                   if (key.currentState != null && key.currentState!.dadosValidados()){
                     setState(() {
                       final novaTarefa = key.currentState!.novaTarefa;
+                      if (index == null){
+                        novaTarefa.id = ++ _ultimoId;
+                      }else{
+                        tarefas[index] = novaTarefa;
+                      }
                     });
+                    Navigator.of(context).pop();
                   }
                 },
                 child: Text('Salvar'),
