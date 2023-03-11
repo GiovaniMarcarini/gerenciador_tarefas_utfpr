@@ -11,12 +11,15 @@ class ListaTarefasPage extends StatefulWidget{
 
 class _ListaTarefasPageState extends State<ListaTarefasPage>{
 
+  static const ACAO_EDITAR = 'editar';
+  static const ACAO_EXCLUIR = 'excluir';
+
   final tarefas = <Tarefa>[
-    //Tarefa(id: 1, descricao: 'Exercícios em sala de aula',
-    //prazo: DateTime.now().add(Duration(days: 5))
-   // ),
+    Tarefa(id: 1, descricao: 'Exercícios em sala de aula',
+    prazo: DateTime.now().add(Duration(days: 5))
+    ),
   ];
-   int _ultimoId = 0;
+   int _ultimoId = 1;
 
   @override
   Widget build(BuildContext context){
@@ -53,9 +56,19 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
     return ListView.separated(
         itemBuilder: (BuildContext context, int index){
           final tarefa = tarefas[index];
-          return ListTile(
-            title: Text('${tarefa.id} - ${tarefa.descricao}'),
-            subtitle: Text(tarefa.prazo == null ? 'Sem prazo definido' : 'Prazo - ${tarefa.prazo}'),
+          return PopupMenuButton<String>(
+            child: ListTile(
+              title: Text('${tarefa.id} - ${tarefa.descricao}'),
+              subtitle: Text(tarefa.prazo == null ? 'Sem prazo definido' : 'Prazo - ${tarefa.prazoFormatado}'),
+            ),
+              itemBuilder: (BuildContext context) => criarItensMenuPopup(),
+            onSelected: (String valorSelecionado){
+              if (valorSelecionado == ACAO_EDITAR){
+                _abrirForm(tarefaAtual: tarefa, indice: index);
+              }else{
+                _excluir(index);
+              }
+            },
           );
         },
         separatorBuilder: (BuildContext context, int index) => Divider(),
@@ -63,7 +76,36 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
     );
   }
 
-  void _abrirForm({Tarefa? tarefaAtual, int? index}){
+  List<PopupMenuEntry<String>> criarItensMenuPopup(){
+    return[
+      PopupMenuItem<String>(
+        value: ACAO_EDITAR,
+          child: Row(
+            children: [
+              Icon(Icons.edit, color: Colors.black),
+              Padding(
+                  padding: EdgeInsets.only(left: 10),
+                child: Text('Editar'),
+              )
+            ],
+          )
+      ),
+      PopupMenuItem<String>(
+          value: ACAO_EXCLUIR,
+          child: Row(
+            children: [
+              Icon(Icons.delete, color: Colors.red),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text('Excluir'),
+              )
+            ],
+          )
+      )
+    ];
+  }
+
+  void _abrirForm({Tarefa? tarefaAtual, int? indice}){
     final key = GlobalKey<ConteudoFormDialogState>();
     showDialog(
         context: context,
@@ -82,10 +124,10 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
                   if (key.currentState != null && key.currentState!.dadosValidados()){
                     setState(() {
                       final novaTarefa = key.currentState!.novaTarefa;
-                      if (index == null){
+                      if (indice == null){
                         novaTarefa.id = ++ _ultimoId;
                       }else{
-                        tarefas[index] = novaTarefa;
+                        tarefas[indice] = novaTarefa;
                       }
                     });
                     Navigator.of(context).pop();
@@ -97,5 +139,41 @@ class _ListaTarefasPageState extends State<ListaTarefasPage>{
           );
         }
     );
+  }
+
+  void _excluir(int indice){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.warning, color: Colors.red,),
+                Padding(
+                    padding: EdgeInsets.only(left: 10),
+                  child: Text('ATENÇÃO'),
+                ),
+              ],
+            ),
+            content: Text('Esse registro será deletado definitivamente'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Cancelar')
+              ),
+              TextButton(
+                  onPressed: () {
+                     Navigator.of(context).pop();
+                     setState(() {
+                       tarefas.removeAt(indice);
+                     });
+                     },
+                  child: Text('OK')
+              )
+            ],
+          );
+        }
+    );
+
   }
 }

@@ -71,7 +71,7 @@ class ConteudoFormDialogState extends State<ConteudoFormDialog>{
           context: context,
           initialDate: data,
           firstDate: data.subtract(Duration(days: 365 * 5)),
-          lastDate: data.subtract(Duration(days: 365 * 5)),
+          lastDate: data.add(Duration(days: 365 * 5)),
       ).then((DateTime? dataSelecionada){
         if (dataSelecionada != null){
           setState(() {
@@ -88,5 +88,4 @@ class ConteudoFormDialogState extends State<ConteudoFormDialog>{
         descricao: descricaoController.text,
       prazo: prazoController.text.isEmpty ? null : _dateFormat.parse(prazoController.text),
     );
-
 }
